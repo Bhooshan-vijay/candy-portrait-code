@@ -1,5 +1,5 @@
 from PIL import Image
-from RpiMotorLib import RpiMotorLib, rpiservolib
+from RpiMotorLib import RpiMotorLib
 import time
 
 gpio_pins = (14,15,18)
@@ -9,10 +9,6 @@ distance= 80
 im = Image.open('hacksmith.jpg')
 pix = im.load()
 
-servo  = rpiservolib.SG90servo("servoone", 50, 2, 12)
-servo2  = rpiservolib.SG90servo("servotwo", 50, 2, 12)
-servo3  = rpiservolib.SG90servo("servothree", 50, 2, 12)
-servo4  = rpiservolib.SG90servo("servofour", 50, 2, 12)
 motor = RpiMotorLib.A4988Nema(direction, step, gpio_pins, "A4988")
 
 
@@ -34,23 +30,6 @@ def colorComparer(value):
         print("Red")
         return 'r'
 
-def ServoMover(color):
-    if color =='r':
-        servo.servo_move(7, 11, 1, False, .01)
-        time.sleep(2)
-    if color =='y':
-        servo.servo_move(7, 11, 1, False, .01)
-        time.sleep(2)
-    if color == 'o':
-        servo.servo_move(7, 11, 1, False, .01)
-        time.sleep(2)
-    if color == 'b':
-        servo.servo_move(7, 11, 1, False, .01)
-        time.sleep(2)
-
-
-
-
 
 for y in range(59,-1,-1):
     for x in range(0, 40, 1):
@@ -58,7 +37,22 @@ for y in range(59,-1,-1):
         motor.motor_go(False,"Full", 200, 0.0005, 0.5)
         time.sleep(1)
         color = colorComparer(RGBValues)
-        ServoMover(color)
+        if color == 'r':
+            # open red servo stopper
+            time.sleep(2)
+        elif color == 'b':
+            time.sleep(2)
+            #open blue servo stopper
+        elif color == 'o':
+            time.sleep(2)
+            # open yellow servo stopper
+        elif color == 'y':
+            #open yellow servo stopper
+            time.sleep(2)
+        if x == 39:
+            motor.motor_go(True,"Full", 8000, 0.0001 , 0.5)
+            time.sleep(1)
+
 
 
 
