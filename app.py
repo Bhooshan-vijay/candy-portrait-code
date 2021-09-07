@@ -29,7 +29,7 @@ motor1 = RpiMotorLib.A4988Nema(direction2, step2, gpio_pins2, "A4988")
 #This function will compare the color values of each pixel and returns a value what the color can be 
 def colorComparer(value):
 
-    g = value[1]
+    g = value[1]   # this function will store the second value of the value given which are the values of color green
 
     if g in range(245,265):
         print("Yellow")
