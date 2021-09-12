@@ -7,6 +7,17 @@ from RpiMotorLib import RpiMotorLib, rpiservolib
 # This library helps in giving delays to stop the code if needed
 import time
 
+#this library helps in controlling the pins of the raspberry pi
+import RPi.GPIO as GPIO
+
+#the sys module provides information about constants, functions and methods etc. here we are using a function of this library to stop the code execution if a certain value is true
+import sys
+
+GPIO.setmode(GPIO.BOARD)         #Set GPIO pin numbering
+
+GPIO.setup(12, GPIO.IN, pull_down=GPIO.PUD_DOWN)  #Enables input pin  and sets an internal pull down resistor
+
+
 gpio_pins = (14,15,18)  #this variable declares the pins that will control the stepper motor 1
 direction = 20          # this pin controls the direction of motor 1
 step = 21               # this pin controls the step of motor 1
@@ -67,10 +78,12 @@ def ServoMover(color):
             time.sleep(2)
 
 for y in range(59,-1,-1):
-
+ 
     for x in range(0, 40, 1):
 
         RGBValues = pixel[x, y]                                  # this variable will store the rgb color value of the pixel value given to it
+
+        input = GPIO.input(12)                                   # this variable store the values that are coming to the input pin
 
         motor.motor_go(False,"Full", 200, 0.0005, 0.5)           # this function will make the motor 1 run clockwise with full steps and take 200 steps with a 0.0005 second delay between each step 
         motor1.motor_go(True,"FUll", 200, 0.0005, 0.5)           # this function will make the motor 2 run anti - clockwise with full steps and take 200 steps with a 0.0005 second delay between each step 
@@ -84,4 +97,7 @@ for y in range(59,-1,-1):
             motor.motor_go(True,"Full", 8000, 0.0001 , 0.5)
             motor1.motor_go(False,"Full", 8000, 0.0001 , 0.5)
             time.sleep(1)
+        
+        if input == True:
+            sys.exit("Emergency Button Pressed");
 
