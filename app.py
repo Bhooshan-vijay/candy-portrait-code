@@ -1,4 +1,5 @@
 # This library gives the color value of each pixel
+from _typeshed import StrOrBytesPath
 from PIL import Image
 
 # This library gives control to the stepper motor and the servo motors
@@ -84,20 +85,45 @@ for y in range(59,-1,-1):
         RGBValues = pixel[x, y]                                  # this variable will store the rgb color value of the pixel value given to it
 
         input = GPIO.input(12)                                   # this variable store the values that are coming to the input pin
+        
+        steps = 1
 
-        motor.motor_go(False,"Full", 200, 0.0005, 0.5)           # this function will make the motor 1 run clockwise with full steps and take 200 steps with a 0.0005 second delay between each step 
-        motor1.motor_go(True,"FUll", 200, 0.0005, 0.5)           # this function will make the motor 2 run anti - clockwise with full steps and take 200 steps with a 0.0005 second delay between each step 
+        for acceleration in range(0.0165, 0.0004,-2):
+            
+            motor.motor_go(False,"Full", 1, acceleration, 0)           # this function will make the motor 1 run clockwise with full steps and take 1 steps with a delay of value acceleration between each step 
+            motor1.motor_go(True,"FUll", 1, acceleration, 0)           # this function will make the motor 2 run anti - clockwise with full steps and take 1 steps with a  delay of value acceleration between each step 
+            steps += 1
 
+            if steps == 80:
+                motor.motor_go(False,"Full", 40, 0.0005, 0)
+                motor1.motor_go(True, "Full", 40, 0.0005, 0)
+
+                for deceleration in range(0.0005, 0.0166, 2):
+                    motor.motor_go(False, "Full", 1, deceleration, 0)
+                    motor1.motor_go(True, "Full", 1, deceleration, 0)
+        
         time.sleep(1)                                            # this function will stop the code for 1 second
 
         color = colorComparer(RGBValues)                         # the variable will store the values sent back by the function created
 
         if x == 39:
             # if this if statement is true then the the motors will go back to the initial position
-            motor.motor_go(True,"Full", 8000, 0.0001 , 0.5)
-            motor1.motor_go(False,"Full", 8000, 0.0001 , 0.5)
-            time.sleep(1)
+            for acceleration in range(0.0165, 0.0004,-1):
+            
+                motor.motor_go(False,"Full", 1, acceleration, 0)           # this function will make the motor 1 run clockwise with full steps and take 1 steps with a delay of value acceleration between each step 
+                motor1.motor_go(True,"FUll", 1, acceleration, 0)           # this function will make the motor 2 run anti - clockwise with full steps and take 1 steps with a  delay of value acceleration between each step 
+                steps += 1
+
+                if steps == 80:
+                    motor.motor_go(False,"Full", 7680, 0.0005, 0)
+                    motor1.motor_go(True, "Full",7680, 0.0005, 0)
+
+                    for deceleration in range(0.0005, 0.0166, 1):
+                        motor.motor_go(False, "Full", 1, deceleration, 0)
+                        motor1.motor_go(True, "Full", 1, deceleration, 0)
+
+                time.sleep(1)
         
         if input == True:
-            sys.exit("Emergency Button Pressed");
+            sys.exit("Emergency Button Pressed")
 
